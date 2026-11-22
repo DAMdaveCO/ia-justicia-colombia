@@ -1,0 +1,89 @@
+/**
+ * ATOM · Slider de progreso (role="slider" personalizado).
+ * Por qué no <input type="range">: necesitamos mostrar el búfer descargado,
+ * un tooltip de tiempo al pasar el ratón y un estilo idéntico en iOS/Android
+ * (los range nativos difieren mucho). La accesibilidad se recupera con ARIA +
+ * teclado en js/organisms/player.js.
+ *
+ * El progreso se pinta con la variable --progress (0–1) y transform: scaleX,
+ * que se compone en GPU y no provoca reflujo en cada timeupdate.
+ */
+.slider {
+  --progress: 0;
+  --buffer: 0;
+  --hover: 0;
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 28px;              /* Área táctil generosa alrededor de la barra fina */
+  cursor: pointer;
+  touch-action: none;        /* El arrastre no desplaza la página en móvil */
+  -webkit-user-select: none;
+  user-select: none;
+}
+.slider__track {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.3);
+  transition: height var(--dur-fast) var(--ease-out);
+}
+.slider__buffer, .slider__fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+}
+.slider__buffer { background: rgb(255 255 255 / 0.25); transform: scaleX(var(--buffer)); }
+.slider__fill { background: var(--text); transform: scaleX(var(--progress)); }
+
+.slider__thumb {
+  position: absolute;
+  left: calc(var(--progress) * 100%);
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.5);
+  transform: scale(0);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+/* Hover / foco / arrastre: barra verde y pulgar visible (como Spotify) */
+.slider:hover .slider__fill,
+.slider:focus-visible .slider__fill,
+.slider.is-dragging .slider__fill { background: var(--accent); }
+.slider:hover .slider__thumb,
+.slider:focus-visible .slider__thumb,
+.slider.is-dragging .slider__thumb { transform: scale(1); }
+.slider:hover .slider__track,
+.slider.is-dragging .slider__track { height: 6px; }
+.slider:focus-visible { outline-offset: 2px; }
+
+/* En táctil el pulgar siempre es visible: no existe "hover" que lo revele */
+@media (hover: none) {
+  .slider__thumb { transform: scale(1); }
+}
+
+.slider__tooltip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: calc(var(--hover) * 100%);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-fast);
+}
+.slider.is-hovering .slider__tooltip,
+.slider.is-dragging .slider__tooltip { opacity: 1; }

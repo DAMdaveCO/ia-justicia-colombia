@@ -1,0 +1,364 @@
+<!doctype html>
+<!--
+  index.html — PLANTILLA (pages/). No se sirve tal cual: scripts/build.mjs
+  sustituye {{ CLAVE }} (valores escapados) y {{{ CLAVE }}} (HTML ya saneado por
+  js/lib/markdown.js o JSON-LD serializado de forma segura) y escribe dist/.
+
+  Decisiones clave:
+  - HTML semántico (header/main/section/aside/footer) + un único <h1>.
+  - Cero <script> y cero style="" en línea: la CSP prohíbe 'unsafe-inline'.
+    El único <script> inline es JSON-LD (type=application/ld+json), que el
+    navegador trata como bloque de datos y nunca ejecuta.
+  - Las notas vienen pre-renderizadas: los rastreadores (Google, WhatsApp,
+    LinkedIn) y quien navega sin JS ven el contenido completo.
+-->
+<html lang="{{LANG}}" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <!-- viewport-fit=cover habilita env(safe-area-inset-*) en iPhone con notch/isla. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{TITLE_FULL}}</title>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <meta name="author" content="{{AUTHOR}}">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <link rel="canonical" href="{{PAGE_URL}}">
+  <meta name="theme-color" content="{{THEME_COLOR}}">
+  <meta name="color-scheme" content="dark">
+  <!-- iOS: título al anclar a la pantalla de inicio; evita que Safari convierta números (radicados, cédulas) en enlaces telefónicos. -->
+  <meta name="apple-mobile-web-app-title" content="IA y Justicia">
+  <meta name="format-detection" content="telephone=no">
+
+  <!-- Open Graph: WhatsApp y LinkedIn leen estas etiquetas (URLs absolutas obligatorias). -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{SERIES}}">
+  <meta property="og:locale" content="{{LOCALE}}">
+  <meta property="og:title" content="{{TITLE_FULL}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+  <meta property="og:url" content="{{PAGE_URL}}">
+  <meta property="og:image" content="{{OG_IMAGE}}">
+  <meta property="og:image:secure_url" content="{{OG_IMAGE}}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{OG_IMAGE_ALT}}">
+  <meta property="og:audio" content="{{AUDIO_URL}}">
+  <meta property="og:audio:secure_url" content="{{AUDIO_URL}}">
+  <meta property="og:audio:type" content="{{AUDIO_MIME}}">
+
+  <!-- Twitter/X Cards (también las usan Slack, Discord y Telegram como respaldo). -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{TITLE_FULL}}">
+  <meta name="twitter:description" content="{{DESCRIPTION}}">
+  <meta name="twitter:image" content="{{OG_IMAGE}}">
+  <meta name="twitter:image:alt" content="{{OG_IMAGE_ALT}}">
+
+  <!-- Iconos y PWA mínima -->
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/assets/img/cover-192.jpg" sizes="192x192" type="image/jpeg">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.jpg">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Rendimiento: la fuente autoalojada se precarga (evita salto de texto);
+       la portada del hero es el LCP, así que se pide con prioridad alta. -->
+  <link rel="preload" href="/assets/fonts/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/img/cover-512.jpg" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="/css/main.css?v={{BUILD}}">
+  <noscript><link rel="stylesheet" href="/css/noscript.css"></noscript>
+  <script type="module" src="/js/main.js?v={{BUILD}}"></script>
+
+  <!-- Datos estructurados Schema.org (PodcastEpisode). Bloque de datos, no ejecutable. -->
+  <script type="application/ld+json">{{{JSON_LD}}}</script>
+</head>
+<body>
+  <!-- Primer elemento enfocable: salta la navegación (WCAG 2.4.1). -->
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <!-- ATOMS · Sprite de iconos SVG. Un solo bloque reutilizado con <use>:
+       menos bytes, sin peticiones extra y compatible con la CSP. -->
+  <svg class="icon-sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><rect fill="currentColor" x="6" y="4.5" width="4" height="15" rx="1.2"/><rect fill="currentColor" x="14" y="4.5" width="4" height="15" rx="1.2"/></symbol>
+    <symbol id="i-back15" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3 3.5v4.2h4.2"/></g><text x="12.2" y="15.6" text-anchor="middle" font-size="7.6" font-weight="700" fill="currentColor" font-family="Inter, system-ui, sans-serif">15</text></symbol>
+    <symbol id="i-fwd15" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1"/><path d="M21 3.5v4.2h-4.2"/></g><text x="11.8" y="15.6" text-anchor="middle" font-size="7.6" font-weight="700" fill="currentColor" font-family="Inter, system-ui, sans-serif">15</text></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></g></symbol>
+    <symbol id="i-volume-mute" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5Z" fill="currentColor"/><path d="m16 9 6 6M22 9l-6 6"/></g></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></g></symbol>
+    <symbol id="i-whatsapp" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.6-4.7A8.9 8.9 0 1 1 7.8 19.6L3 21Z"/><path d="M9 8.6c.2-.5.7-.6 1-.6l.9 2.1-.8 1a5.6 5.6 0 0 0 2.8 2.8l1-.8 2.1.9c0 .3-.1.8-.6 1-1 .5-2.3.5-4-.6a9 9 0 0 1-2.4-2.4C7.9 10.9 8.5 9.6 9 8.6Z" fill="currentColor" stroke-width="1"/></g></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="4"/><path d="M8 10.5V17"/><path d="M12 17v-6.5"/><path d="M12 13.5a2.8 2.8 0 0 1 5.5 0V17"/></g><circle cx="8" cy="7.3" r="1.25" fill="currentColor"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13.5a4.5 4.5 0 0 0 6.4.4l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10.5a4.5 4.5 0 0 0-6.4-.4l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></g></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-community" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8"/><path d="M18.5 14.2A6.5 6.5 0 0 1 21.5 20"/></g></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></g></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></g></symbol>
+    <symbol id="i-chevron-up" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-headphones" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3ZM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3Z"/></g></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5l1.9 5.6 5.6 1.9-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.9L12 2.5Zm6.5 12 .9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9.9-2.6Z"/></symbol>
+  </svg>
+
+  <div class="page">
+    <!-- ORGANISM · Cabecera -->
+    <header class="site-header">
+      <a class="brand" href="#contenido" aria-label="{{SERIES}}, ir al inicio del contenido">
+        <span class="brand__mark" aria-hidden="true"><svg class="icon"><use href="#i-headphones"/></svg></span>
+        <span class="brand__name">IA <span class="text-accent">&amp;</span> Justicia</span>
+      </a>
+      <nav class="site-nav" aria-label="Secciones">
+        <ul role="list">
+          <li><a href="#reproductor">Escuchar</a></li>
+          <li><a href="#notas">Notas</a></li>
+          <li><a href="#comunidad">Comunidad</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="contenido" tabindex="-1">
+      <!-- ORGANISM · Hero del episodio (estilo página de álbum de Spotify) -->
+      <section class="hero" aria-labelledby="episode-title">
+        <div class="hero__backdrop" aria-hidden="true"></div>
+        <div class="hero__inner">
+          <figure class="hero__cover">
+            <img src="/assets/img/cover-512.jpg"
+                 srcset="/assets/img/cover-512.jpg 512w, /assets/img/cover-1024.jpg 1024w"
+                 sizes="(min-width: 768px) 232px, 60vw"
+                 width="512" height="512" fetchpriority="high"
+                 alt="Portada del podcast: balanza de la justicia sobre circuitos en verde, con el texto Inteligencia Artificial y Justicia Colombiana">
+          </figure>
+          <div class="hero__meta">
+            <p class="eyebrow"><span class="tag tag--accent"><svg class="icon icon--xs" aria-hidden="true"><use href="#i-sparkle"/></svg>Podcast generado con IA</span> <span class="eyebrow__series">Episodio {{EPISODE_NUMBER}}</span></p>
+            <h1 id="episode-title" class="display">{{EPISODE_TITLE}}</h1>
+            <p class="hero__series">{{SERIES}}</p>
+            <p class="hero__lead">{{LONG_DESCRIPTION}}</p>
+            <ul class="meta-list" role="list">
+              <li><time datetime="{{DATE_ISO}}">{{DATE_HUMAN}}</time></li>
+              <li><time datetime="{{DURATION_ISO}}">{{DURATION_HUMAN}}</time></li>
+              <li>Español (Colombia)</li>
+            </ul>
+
+            <!-- MOLECULE · Acciones principales. El botón grande es un segundo
+                 control del MISMO audio (data-action="toggle"). -->
+            <div class="hero__actions">
+              <button class="btn btn--play btn--xl js-only" type="button" data-action="toggle" aria-label="Reproducir episodio">
+                <svg class="icon icon--lg icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+                <svg class="icon icon--lg icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+              </button>
+              <span class="equalizer js-only" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+              <a class="btn btn--ghost" href="#compartir">
+                <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg>Compartir
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ORGANISM · Reproductor principal -->
+      <section id="reproductor" class="player card" aria-labelledby="player-heading">
+        <h2 id="player-heading" class="visually-hidden">Reproductor del episodio</h2>
+
+        <!-- Fuente única de audio. preload="metadata": solo descarga la
+             duración (ahorra datos móviles). playsinline/webkit-playsinline:
+             iOS no fuerza reproducción a pantalla completa. Sin controls: los
+             controles propios están abajo; sin JS se usa el <noscript>. -->
+        <audio id="episode-audio" preload="metadata" playsinline webkit-playsinline x-webkit-airplay="allow" src="{{AUDIO_PATH}}"></audio>
+        <noscript>
+          <audio class="player__native" controls preload="metadata" src="{{AUDIO_PATH}}">Tu navegador no soporta audio HTML5.</audio>
+        </noscript>
+
+        <div class="player__now js-only">
+          <img class="player__thumb" src="/assets/img/cover-192.jpg" width="56" height="56" alt="" loading="lazy">
+          <div class="player__titles">
+            <p class="player__title">{{EPISODE_TITLE}}</p>
+            <p class="player__subtitle">{{SERIES}}</p>
+          </div>
+          <span class="equalizer equalizer--sm" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        </div>
+
+        <!-- MOLECULE · Barra de progreso (slider ARIA personalizado) -->
+        <div class="timeline js-only">
+          <span class="timeline__time" data-bind="current" aria-hidden="true">0:00</span>
+          <div class="slider" role="slider" tabindex="0" data-slider="seek"
+               aria-label="Posición de reproducción" aria-valuemin="0" aria-valuemax="{{DURATION_SECONDS}}"
+               aria-valuenow="0" aria-valuetext="0 segundos de {{DURATION_TEXT}}">
+            <span class="slider__track">
+              <span class="slider__buffer"></span>
+              <span class="slider__fill"></span>
+            </span>
+            <span class="slider__thumb"></span>
+            <span class="slider__tooltip" aria-hidden="true">0:00</span>
+          </div>
+          <span class="timeline__time" data-bind="duration" aria-hidden="true">{{DURATION_CLOCK}}</span>
+        </div>
+
+        <!-- MOLECULE · Controles de reproducción -->
+        <div class="controls js-only">
+          <div class="controls__side">
+            <button class="btn btn--pill btn--speed" type="button" data-action="speed" aria-label="Velocidad de reproducción: 1x. Pulsa para cambiar">1x</button>
+          </div>
+          <div class="controls__main">
+            <button class="btn btn--icon" type="button" data-action="back" aria-label="Retroceder 15 segundos">
+              <svg class="icon icon--md" aria-hidden="true"><use href="#i-back15"/></svg>
+            </button>
+            <button class="btn btn--play btn--lg" type="button" data-action="toggle" aria-label="Reproducir episodio">
+              <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+              <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+            </button>
+            <button class="btn btn--icon" type="button" data-action="forward" aria-label="Adelantar 15 segundos">
+              <svg class="icon icon--md" aria-hidden="true"><use href="#i-fwd15"/></svg>
+            </button>
+          </div>
+          <div class="controls__side controls__side--end volume">
+            <button class="btn btn--icon btn--sm" type="button" data-action="mute" aria-label="Silenciar" aria-pressed="false">
+              <svg class="icon icon-volume" aria-hidden="true"><use href="#i-volume"/></svg>
+              <svg class="icon icon-muted" aria-hidden="true"><use href="#i-volume-mute"/></svg>
+            </button>
+            <!-- Volumen: input range nativo (accesible por defecto). En iOS
+                 el volumen solo se controla con los botones físicos, así que
+                 JS oculta este control allí. -->
+            <label class="visually-hidden" for="volume">Volumen</label>
+            <input id="volume" class="range" type="range" min="0" max="100" step="5" value="100" aria-valuetext="100 %">
+          </div>
+        </div>
+
+        <!-- Live region: anuncia cambios no evidentes (velocidad, saltos) a lectores de pantalla. -->
+        <p class="visually-hidden" role="status" aria-live="polite" data-bind="announcer"></p>
+
+        <details class="shortcuts js-only">
+          <summary>Atajos de teclado</summary>
+          <dl class="shortcuts__list">
+            <div><dt><kbd>K</kbd> o <kbd>Espacio</kbd></dt><dd>Reproducir / pausar</dd></div>
+            <div><dt><kbd>J</kbd> / <kbd>L</kbd></dt><dd>−15 s / +15 s</dd></div>
+            <div><dt><kbd>M</kbd></dt><dd>Silenciar</dd></div>
+            <div><dt><kbd>←</kbd> <kbd>→</kbd> en la barra</dt><dd>±5 s (<kbd>Re Pág</kbd>/<kbd>Av Pág</kbd>: ±1 min)</dd></div>
+          </dl>
+        </details>
+
+        <p class="player__download">
+          <a class="link-subtle" href="{{AUDIO_PATH}}" download="ia-justicia-colombiana-ep{{EPISODE_NUMBER}}.m4a">
+            <svg class="icon icon--sm" aria-hidden="true"><use href="#i-download"/></svg>Descargar audio (M4A, 13,9 MB)
+          </a>
+        </p>
+      </section>
+
+      <!-- ORGANISM · CTA de comunidad (tarjeta destacada) -->
+      <section id="comunidad" class="community card" aria-labelledby="community-heading">
+        <div class="community__icon" aria-hidden="true"><svg class="icon icon--lg"><use href="#i-community"/></svg></div>
+        <div class="community__body">
+          <h2 id="community-heading" class="title-md">Únete al Grupo de {{COMMUNITY}}</h2>
+          <p class="text-muted">Abogados, ingenieros y curiosos construyendo con Claude en Colombia: meetups, demos en vivo y casos reales de IA aplicada al derecho.</p>
+        </div>
+        <a class="btn btn--primary community__cta" href="{{COMMUNITY_URL}}" target="_blank" rel="noopener noreferrer">
+          Unirme a la comunidad<svg class="icon icon--sm" aria-hidden="true"><use href="#i-external"/></svg>
+          <span class="visually-hidden">(se abre en una pestaña nueva)</span>
+        </a>
+      </section>
+
+      <!-- TEMPLATE · Contenido a dos columnas (notas + barra lateral) -->
+      <div class="content-grid">
+        <!-- ORGANISM · Notas del episodio -->
+        <section id="notas" class="notes" aria-labelledby="notes-heading">
+          <div class="notes__header">
+            <h2 id="notes-heading" class="title-lg">Notas del episodio</h2>
+            <p class="text-muted">Sobre la charla, los participantes y los documentos de apoyo.</p>
+          </div>
+
+          <!-- MOLECULE · Pestañas (patrón ARIA Tabs). Sin JS se ven como enlaces. -->
+          <div class="tabs" role="tablist" aria-label="Documentos del episodio" hidden data-tabs>
+            <button class="tabs__tab" type="button" role="tab" id="tab-notas" aria-controls="panel-notas" aria-selected="true">Sobre la charla</button>
+            <button class="tabs__tab" type="button" role="tab" id="tab-apps" aria-controls="panel-apps" aria-selected="false" tabindex="-1">Análisis de apps</button>
+            <button class="tabs__tab" type="button" role="tab" id="tab-normativa" aria-controls="panel-normativa" aria-selected="false" tabindex="-1">Marco normativo</button>
+          </div>
+
+          <article id="panel-notas" class="prose card" role="tabpanel" aria-labelledby="tab-notas" data-doc="notas">
+{{{NOTES_HTML}}}
+          </article>
+          <article id="panel-apps" class="prose card" role="tabpanel" aria-labelledby="tab-apps" data-doc="analisis-apps" data-src="/content/analisis-apps.md" hidden>
+            <p><a href="/content/analisis-apps.md">Leer el análisis de las aplicaciones (Markdown)</a></p>
+          </article>
+          <article id="panel-normativa" class="prose card" role="tabpanel" aria-labelledby="tab-normativa" data-doc="normativa" data-src="/content/normativa.md" hidden>
+            <p><a href="/content/normativa.md">Leer el compendio normativo (Markdown)</a></p>
+          </article>
+        </section>
+
+        <!-- Barra lateral: índice, compartir y autor -->
+        <aside class="sidebar" aria-label="Índice y acciones">
+          <nav class="toc card" aria-labelledby="toc-heading">
+            <h2 id="toc-heading" class="title-sm">En este documento</h2>
+            <ol class="toc__list" role="list" data-toc>
+{{{TOC_HTML}}}
+            </ol>
+          </nav>
+
+          <!-- MOLECULE · Botones de compartir (funcionan sin JS: son enlaces). -->
+          <section id="compartir" class="share card" aria-labelledby="share-heading">
+            <h2 id="share-heading" class="title-sm">Compartir episodio</h2>
+            <div class="share__buttons">
+              <a class="btn btn--share btn--whatsapp" href="{{WHATSAPP_SHARE}}" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>WhatsApp<span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+              </a>
+              <a class="btn btn--share btn--linkedin" href="{{LINKEDIN_SHARE}}" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg>LinkedIn<span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+              </a>
+              <button class="btn btn--share js-only" type="button" data-action="copy-link" data-url="{{PAGE_URL}}">
+                <svg class="icon icon-default" aria-hidden="true"><use href="#i-link"/></svg>
+                <svg class="icon icon-done" aria-hidden="true"><use href="#i-check"/></svg>
+                <span data-label>Copiar enlace</span>
+              </button>
+              <!-- Web Share API: hoja nativa de compartir en Android/iOS. JS lo muestra solo si existe. -->
+              <button class="btn btn--share" type="button" data-action="native-share" hidden>
+                <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg>Más opciones
+              </button>
+            </div>
+          </section>
+
+          <section class="author card" aria-labelledby="author-heading">
+            <h2 id="author-heading" class="title-sm">Sobre el autor</h2>
+            <p class="text-muted">Producción del episodio y del sitio por <strong class="text-strong">{{AUTHOR}}</strong>. Conversemos sobre IA aplicada al sector público y legal.</p>
+            <a class="btn btn--outline" href="{{AUTHOR_URL}}" target="_blank" rel="noopener noreferrer">
+              <svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg>Mi LinkedIn<span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+            </a>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <!-- ORGANISM · Pie de página -->
+    <footer class="site-footer">
+      <div class="site-footer__links">
+        <a class="footer-link" href="{{COMMUNITY_URL}}" target="_blank" rel="noopener noreferrer">
+          <svg class="icon" aria-hidden="true"><use href="#i-community"/></svg>Grupo de {{COMMUNITY}}<span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+        </a>
+        <a class="footer-link" href="{{AUTHOR_URL}}" target="_blank" rel="noopener noreferrer">
+          <svg class="icon" aria-hidden="true"><use href="#i-linkedin"/></svg>Mi LinkedIn<span class="visually-hidden"> (se abre en una pestaña nueva)</span>
+        </a>
+      </div>
+      <p class="site-footer__note">Audio y resúmenes generados con inteligencia artificial a partir del conversatorio «IA, Estado, justicia y litigio» (ICDP, Bogotá, {{EVENT_DATE_HUMAN}}). Pueden contener imprecisiones: verifica siempre las fuentes normativas y jurisprudenciales.</p>
+      <p class="site-footer__note">© {{YEAR}} {{AUTHOR}} · {{SERIES}}</p>
+    </footer>
+  </div>
+
+  <!-- ORGANISM · Mini reproductor fijo (aparece al salir el principal de la vista). -->
+  <div class="mini-player js-only" data-mini-player inert>
+    <div class="mini-player__progress" aria-hidden="true"><span></span></div>
+    <img class="mini-player__thumb" src="/assets/img/cover-192.jpg" width="40" height="40" alt="" loading="lazy">
+    <div class="mini-player__titles">
+      <p class="mini-player__title">{{EPISODE_TITLE}}</p>
+      <p class="mini-player__time"><span data-bind="current">0:00</span> / <span data-bind="duration">{{DURATION_CLOCK}}</span></p>
+    </div>
+    <button class="btn btn--icon btn--sm hide-xs" type="button" data-action="back" aria-label="Retroceder 15 segundos">
+      <svg class="icon" aria-hidden="true"><use href="#i-back15"/></svg>
+    </button>
+    <button class="btn btn--play btn--md" type="button" data-action="toggle" aria-label="Reproducir episodio">
+      <svg class="icon icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+      <svg class="icon icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+    </button>
+    <button class="btn btn--icon btn--sm" type="button" data-action="forward" aria-label="Adelantar 15 segundos">
+      <svg class="icon" aria-hidden="true"><use href="#i-fwd15"/></svg>
+    </button>
+    <a class="btn btn--icon btn--sm" href="#reproductor" aria-label="Ir al reproductor completo">
+      <svg class="icon" aria-hidden="true"><use href="#i-chevron-up"/></svg>
+    </a>
+  </div>
+
+  <!-- MOLECULE · Toast (feedback visual + anuncio a lectores de pantalla). -->
+  <div class="toast" role="status" aria-live="polite" aria-atomic="true" data-toast></div>
+</body>
+</html>

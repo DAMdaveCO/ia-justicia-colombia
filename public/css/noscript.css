@@ -1,0 +1,7 @@
+/**
+ * noscript.css — Solo se carga dentro de <noscript>.
+ * Sin JS no hay controles propios: se muestran las pestañas como documentos
+ * apilados y el reproductor nativo del navegador (accesible por defecto).
+ */
+.player__native { display: block; width: 100%; margin-top: var(--sp-4); }
+.prose[hidden] { display: block !important; margin-top: var(--sp-4); }

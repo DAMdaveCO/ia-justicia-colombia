@@ -1,0 +1,24 @@
+/**
+ * MOLECULE · Botones de compartir. El color de marca aparece en el icono y
+ * al pasar el cursor; el texto se mantiene blanco para conservar el contraste
+ * (el verde de WhatsApp como fondo con texto blanco no llega a 4.5:1).
+ */
+.share__buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+.btn--share {
+  justify-content: flex-start;
+  padding: 0 var(--sp-4);
+  --btn-bg: var(--surface-3);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+}
+.btn--share:hover { --btn-bg: #3a3a3a; }
+.btn--whatsapp .icon { color: var(--whatsapp); }
+.btn--linkedin .icon { color: #5aa2ec; } /* Azul LinkedIn aclarado: 5.9:1 sobre #2a2a2a */
+.btn--whatsapp:hover { box-shadow: inset 0 0 0 1px var(--whatsapp); }
+.btn--linkedin:hover { box-shadow: inset 0 0 0 1px #5aa2ec; }
+.btn--share.is-done { --btn-bg: var(--accent-soft); --btn-fg: var(--accent); }

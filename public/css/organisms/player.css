@@ -1,0 +1,46 @@
+/**
+ * ORGANISM · Reproductor principal (tarjeta "Now Playing").
+ */
+.player {
+  display: grid;
+  gap: var(--sp-4);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface-1));
+  border: 1px solid var(--border);
+}
+.player__now { display: flex; align-items: center; gap: var(--sp-3); min-width: 0; }
+.player__thumb { width: 56px; height: 56px; border-radius: var(--radius-sm); }
+.player__titles { flex: 1; min-width: 0; }
+.player__title {
+  font-weight: 700;
+  /* Títulos largos: una línea con elipsis en vez de romper el layout */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+[data-playback="playing"] .player__title { color: var(--accent); }
+.player__subtitle { color: var(--text-muted); font-size: var(--fs-sm); }
+
+.player__download { display: flex; justify-content: center; }
+
+.shortcuts { color: var(--text-muted); font-size: var(--fs-sm); }
+.shortcuts summary {
+  width: fit-content;
+  margin-inline: auto;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.shortcuts summary:hover { color: var(--text); }
+.shortcuts__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--sp-2) var(--sp-5);
+  margin-top: var(--sp-3);
+}
+.shortcuts__list div { display: flex; justify-content: space-between; gap: var(--sp-3); }
+.shortcuts__list dd { color: var(--text); text-align: right; }
+
+/* En pantallas táctiles los atajos de teclado no aportan: se ocultan */
+@media (hover: none) and (pointer: coarse) {
+  .shortcuts { display: none; }
+}

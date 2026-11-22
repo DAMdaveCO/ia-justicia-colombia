@@ -1,0 +1,45 @@
+/**
+ * ATOM · Tipografía. Clases de rol (no de tamaño) para desacoplar la
+ * semántica (h1, h2…) de la apariencia.
+ */
+.display {
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.035em;
+  text-wrap: balance; /* Reparte líneas en títulos largos (degrada sin problema) */
+}
+.title-lg { font-size: var(--fs-xl); font-weight: 700; line-height: var(--lh-snug); letter-spacing: -0.02em; }
+.title-md { font-size: var(--fs-lg); font-weight: 700; line-height: var(--lh-snug); letter-spacing: -0.01em; }
+.title-sm { font-size: var(--fs-md); font-weight: 700; line-height: var(--lh-snug); }
+.eyebrow {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2);
+  font-size: var(--fs-sm); font-weight: 600;
+}
+.text-muted { color: var(--text-muted); }
+.text-strong { color: var(--text); }
+.text-accent { color: var(--accent); }
+
+.link-subtle {
+  display: inline-flex; align-items: center; gap: var(--sp-2);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgb(255 255 255 / 0.3);
+  transition: color var(--dur-fast);
+}
+.link-subtle:hover { color: var(--text); text-decoration-color: currentColor; }
+
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0 0.4em;
+  font: 600 var(--fs-xs) / 1.6 var(--font-sans);
+  text-align: center;
+  color: var(--text);
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+}

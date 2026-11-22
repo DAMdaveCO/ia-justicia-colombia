@@ -1,0 +1,24 @@
+/**
+ * ATOM · Icono SVG. Hereda color con currentColor, así un mismo icono sirve
+ * en botón verde, enlace gris o modo de alto contraste.
+ */
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+  fill: currentColor;
+  pointer-events: none; /* El evento siempre lo recibe el botón contenedor */
+}
+.icon--xs { width: 0.875rem; height: 0.875rem; }
+.icon--sm { width: 1rem; height: 1rem; }
+.icon--md { width: 1.75rem; height: 1.75rem; }
+.icon--lg { width: 1.75rem; height: 1.75rem; }
+
+/* Pares de iconos con estado: el contenedor decide cuál se ve */
+.icon-pause, .icon-muted, .icon-done { display: none; }
+[data-playback="playing"] .icon-play { display: none; }
+[data-playback="playing"] .icon-pause { display: block; }
+[aria-pressed="true"] .icon-volume { display: none; }
+[aria-pressed="true"] .icon-muted { display: block; }
+.is-done .icon-default { display: none; }
+.is-done .icon-done { display: block; }

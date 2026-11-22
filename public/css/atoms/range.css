@@ -1,0 +1,34 @@
+/**
+ * ATOM · Range nativo (volumen). Se mantiene <input type="range"> porque ya
+ * es accesible (teclado, lectores de pantalla) sin código extra. Solo se
+ * reestiliza; --value (0–100) pinta la parte rellena.
+ */
+.range {
+  --value: 100;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 28px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: none;
+}
+.range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(to right, var(--text) calc(var(--value) * 1%), rgb(255 255 255 / 0.3) 0);
+}
+.range::-moz-range-track { height: 4px; border-radius: var(--radius-pill); background: rgb(255 255 255 / 0.3); }
+.range::-moz-range-progress { height: 4px; border-radius: var(--radius-pill); background: var(--text); }
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px; height: 12px;
+  margin-top: -4px;
+  border-radius: 50%;
+  background: var(--text);
+  border: 0;
+}
+.range::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: var(--text); }
+.range:hover::-webkit-slider-runnable-track { background: linear-gradient(to right, var(--accent) calc(var(--value) * 1%), rgb(255 255 255 / 0.3) 0); }
+.range:hover::-moz-range-progress { background: var(--accent); }

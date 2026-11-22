@@ -1,0 +1,27 @@
+/**
+ * ATOM · Etiqueta (tag/badge) y tarjeta base.
+ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: rgb(255 255 255 / 0.1);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.tag--accent { background: var(--accent-soft); color: var(--accent); }
+
+/* Tarjeta: superficie elevada con bordes redondeados (patrón Spotify) */
+.card {
+  background: var(--surface-1);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-5);
+}
+@media (min-width: 768px) {
+  .card { padding: var(--sp-6); }
+}

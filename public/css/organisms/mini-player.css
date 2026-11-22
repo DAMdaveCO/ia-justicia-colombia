@@ -1,0 +1,67 @@
+/**
+ * ORGANISM · Mini reproductor fijo inferior (barra "Now Playing").
+ * - Aparece cuando el reproductor principal sale de la vista (lo decide un
+ *   IntersectionObserver en JS) y queda inert cuando está oculto, para que
+ *   el teclado y los lectores de pantalla no lleguen a controles invisibles.
+ * - padding-bottom con env(safe-area-inset-bottom): en iPhone sin botón de
+ *   inicio la barra no queda debajo del indicador de gestos.
+ * - backdrop-filter con prefijo -webkit- para Safari.
+ */
+.mini-player {
+  position: fixed;
+  left: calc(var(--sp-2) + var(--safe-left));
+  right: calc(var(--sp-2) + var(--safe-right));
+  bottom: calc(var(--sp-2) + var(--safe-bottom));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-height: var(--mini-player-h);
+  padding: var(--sp-2) var(--sp-3) var(--sp-2) var(--sp-2);
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: rgb(36 36 36 / 0.92);
+  -webkit-backdrop-filter: saturate(160%) blur(16px);
+  backdrop-filter: saturate(160%) blur(16px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(calc(100% + var(--sp-4) + var(--safe-bottom)));
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.mini-player.is-visible { transform: none; }
+
+.mini-player__progress {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: rgb(255 255 255 / 0.15);
+}
+.mini-player__progress span {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  transform: scaleX(var(--progress, 0));
+}
+.mini-player__thumb { width: 44px; height: 44px; border-radius: var(--radius-sm); flex: none; }
+.mini-player__titles { flex: 1; min-width: 0; }
+.mini-player__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+.mini-player__time { color: var(--text-muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+
+@media (max-width: 379px) {
+  .hide-xs { display: none; }
+}
+@media (min-width: 768px) {
+  .mini-player {
+    left: 50%;
+    right: auto;
+    width: min(640px, calc(100% - 2 * var(--gutter)));
+    transform: translate(-50%, calc(100% + var(--sp-4)));
+  }
+  .mini-player.is-visible { transform: translate(-50%, 0); }
+}

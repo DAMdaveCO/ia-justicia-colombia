@@ -1,0 +1,46 @@
+/**
+ * ATOM · Ecualizador animado (puramente CSS).
+ * Se anima solo cuando <html data-playback="playing">: así el estado vive en
+ * un único lugar y todas las instancias se sincronizan sin JS adicional.
+ * Usa transform: scaleY (GPU) en lugar de height para no forzar reflujo.
+ * Es decorativo: aria-hidden en el HTML.
+ */
+.equalizer {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+  opacity: 0;
+  transition: opacity var(--dur-base);
+}
+.equalizer span {
+  width: 4px;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+  transform-origin: bottom;
+  transform: scaleY(0.25);
+}
+.equalizer--sm { height: 14px; gap: 2px; }
+.equalizer--sm span { width: 3px; }
+
+[data-playback="playing"] .equalizer { opacity: 1; }
+[data-playback="playing"] .equalizer span { animation: eq-bounce 900ms ease-in-out infinite alternate; }
+[data-playback="playing"] .equalizer span:nth-child(2) { animation-duration: 640ms; animation-delay: -200ms; }
+[data-playback="playing"] .equalizer span:nth-child(3) { animation-duration: 780ms; animation-delay: -420ms; }
+[data-playback="playing"] .equalizer span:nth-child(4) { animation-duration: 560ms; animation-delay: -120ms; }
+
+@keyframes eq-bounce {
+  0% { transform: scaleY(0.2); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.45); }
+}
+
+/* Sin movimiento: barras estáticas a distintas alturas (sigue indicando "sonando") */
+@media (prefers-reduced-motion: reduce) {
+  [data-playback="playing"] .equalizer span { animation: none; }
+  [data-playback="playing"] .equalizer span:nth-child(1) { transform: scaleY(0.5); }
+  [data-playback="playing"] .equalizer span:nth-child(2) { transform: scaleY(0.9); }
+  [data-playback="playing"] .equalizer span:nth-child(3) { transform: scaleY(0.65); }
+  [data-playback="playing"] .equalizer span:nth-child(4) { transform: scaleY(0.35); }
+}

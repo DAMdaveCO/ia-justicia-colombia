@@ -1,0 +1,25 @@
+/**
+ * MOLECULE · Controles de reproducción.
+ * Grid de 3 columnas (lateral · central · lateral) para que el botón de play
+ * quede SIEMPRE centrado, aunque los laterales tengan anchos distintos.
+ */
+.controls {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.controls__main { display: flex; align-items: center; gap: var(--sp-3); }
+.controls__side { display: flex; align-items: center; gap: var(--sp-1); }
+.controls__side--end { justify-content: flex-end; }
+
+/* El botón de velocidad resalta cuando no está en 1x */
+.btn--speed[data-rate]:not([data-rate="1"]) { --btn-bg: var(--accent-soft); --btn-fg: var(--accent); }
+
+/* En móvil el slider de volumen no cabe ni es útil: se deja solo el botón. */
+@media (max-width: 479px) {
+  .volume .range { display: none; }
+}
+/* iOS: el volumen de <audio> es de solo lectura (lo controla el sistema);
+   se oculta el slider pero se conserva el botón de silencio, que sí funciona. */
+.is-volume-locked .volume .range { display: none; }

@@ -1,0 +1,94 @@
+# =============================================================================
+# netlify.toml — Build y hardening HTTP
+# -----------------------------------------------------------------------------
+# Netlify lee este archivo en despliegues por Git o con `netlify deploy`.
+# (Ojo: Netlify Drop —arrastrar una carpeta— NO aplica netlify.toml; usa Git
+#  o la CLI para que estas cabeceras de seguridad entren en vigor.)
+# scripts/serve.mjs lee ESTE MISMO archivo para reproducir las cabeceras en
+# local, de modo que la CSP se prueba antes de desplegar.
+# =============================================================================
+
+[build]
+  command = "node scripts/build.mjs"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# -----------------------------------------------------------------------------
+# Cabeceras de seguridad para TODAS las rutas
+# -----------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # CSP estricta, sin 'unsafe-inline' ni 'unsafe-eval':
+    #  default-src 'none'      → todo prohibido salvo lo que se habilita abajo.
+    #  script-src 'self'       → solo nuestros módulos JS. El JSON-LD inline es
+    #                            un bloque de datos: el navegador no lo ejecuta.
+    #  style-src 'self'        → solo main.css; los estilos dinámicos se fijan
+    #                            vía CSSOM (setProperty), que la CSP permite.
+    #  img-src 'self' data:    → portadas propias (data: para SVG embebidos).
+    #  media-src 'self'        → el .m4a local; nada de audio de terceros.
+    #  font-src 'self'         → Inter autoalojada (sin Google Fonts).
+    #  connect-src 'self'      → fetch() de los .md de /content/.
+    #  manifest-src 'self'     → site.webmanifest.
+    #  frame-ancestors 'none'  → nadie puede incrustarnos (anti-clickjacking).
+    #  base-uri / form-action  → bloquea inyección de <base> y formularios.
+    #  require-trusted-types-for 'script' + trusted-types markdown
+    #                          → innerHTML solo acepta HTML de la política
+    #                            "markdown" (Chrome/Edge); bloquea DOM-XSS.
+    Content-Security-Policy = """\
+      default-src 'none'; \
+      script-src 'self'; \
+      style-src 'self'; \
+      img-src 'self' data:; \
+      media-src 'self'; \
+      font-src 'self'; \
+      connect-src 'self'; \
+      manifest-src 'self'; \
+      frame-ancestors 'none'; \
+      base-uri 'self'; \
+      form-action 'none'; \
+      object-src 'none'; \
+      require-trusted-types-for 'script'; \
+      trusted-types markdown\
+      """
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Desactiva APIs sensibles que el sitio no usa. autoplay se limita al
+    # propio origen; clipboard-write se permite para "Copiar enlace".
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=(), browsing-topics=(), autoplay=(self), clipboard-write=(self), fullscreen=(self)"
+    Cross-Origin-Opener-Policy = "same-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Permitted-Cross-Domain-Policies = "none"
+
+# -----------------------------------------------------------------------------
+# Caché: los recursos pesados casi nunca cambian. HTML/CSS/JS se quedan con el
+# valor por defecto de Netlify (revalidación con ETag) y el ?v= del build.
+# -----------------------------------------------------------------------------
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/assets/audio/*"
+  [headers.values]
+    # MIME correcto para .m4a: Safari iOS es estricto y lo necesita para
+    # reproducir y hacer peticiones Range (saltar a un minuto concreto).
+    Content-Type = "audio/mp4"
+    Cache-Control = "public, max-age=604800"
+    Accept-Ranges = "bytes"
+
+[[headers]]
+  for = "/content/*"
+  [headers.values]
+    Content-Type = "text/markdown; charset=utf-8"
+    # Evita contenido duplicado en buscadores (ya está en la página).
+    X-Robots-Tag = "noindex"

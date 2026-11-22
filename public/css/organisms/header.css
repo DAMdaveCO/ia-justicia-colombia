@@ -1,0 +1,53 @@
+/**
+ * ORGANISM · Cabecera. Respeta el área segura superior de iOS en horizontal.
+ */
+.site-header {
+  /* Superpuesta al hero: el degradado verde ocupa también la cabecera */
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: calc(var(--sp-4) + var(--safe-top)) calc(var(--gutter) + var(--safe-right)) var(--sp-4) calc(var(--gutter) + var(--safe-left));
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.brand__mark .icon { width: 18px; height: 18px; }
+
+.site-nav ul { display: flex; gap: var(--sp-1); }
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--sp-3);
+  border-radius: var(--radius-pill);
+  /* Blanco: sobre el degradado verde el gris no alcanzaría 4.5:1 */
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--dur-fast), background-color var(--dur-fast);
+}
+.site-nav a:hover { color: var(--text); background: rgb(255 255 255 / 0.07); }
+
+@media (max-width: 479px) {
+  .site-nav a { padding: 0 var(--sp-2); }
+  .brand__name { display: none; }
+}

@@ -1,0 +1,23 @@
+{
+  "$comment": "Única fuente de verdad de los metadatos. scripts/build.mjs los inyecta en index.html, JSON-LD, Open Graph, sitemap y manifest. En Netlify, la variable de entorno URL (dominio de producción) tiene prioridad sobre fallbackSiteUrl.",
+  "fallbackSiteUrl": "https://ia-justicia-colombia.netlify.app",
+  "lang": "es-CO",
+  "locale": "es_CO",
+  "seriesName": "Inteligencia Artificial y Justicia Colombiana",
+  "episodeTitle": "La IA frente a la burocracia judicial",
+  "episodeNumber": 1,
+  "shortDescription": "Por qué mueren los pilotos de IA en el Estado, cuatro apps para tutelas creadas en vivo con Claude Code y las citas jurisprudenciales que no existían.",
+  "longDescription": "Episodio generado con IA a partir del conversatorio «IA, Estado, justicia y litigio» (ICDP, Bogotá, 17 de noviembre de 2026): contratación pública e innovación, la tutelatón con Claude Code y la responsabilidad del abogado ante las alucinaciones.",
+  "eventDate": "2026-11-17",
+  "datePublished": "2026-11-22",
+  "durationSeconds": 1136,
+  "audioPath": "/assets/audio/episodio-ia-justicia.m4a",
+  "audioMime": "audio/mp4",
+  "ogImagePath": "/assets/img/og-image.jpg",
+  "ogImageAlt": "Balanza de la justicia sobre una red de circuitos con el título Inteligencia Artificial y Justicia Colombiana",
+  "authorName": "David Felipe Rodríguez",
+  "authorUrl": "https://www.linkedin.com/in/damdavid/",
+  "communityName": "Claude Colombia",
+  "communityUrl": "https://claudecolombia.com",
+  "themeColor": "#121212"
+}

@@ -1,0 +1,62 @@
+/**
+ * ORGANISM · Hero del episodio (cabecera de álbum de Spotify).
+ * El degradado verde→fondo imita el color "extraído" de la portada que usa
+ * Spotify. Se pinta con background-image (no con <img>) porque es decorativo.
+ */
+.hero {
+  position: relative;
+  isolation: isolate;
+  padding: calc(76px + var(--safe-top) + var(--sp-5)) calc(var(--gutter) + var(--safe-right)) var(--sp-6) calc(var(--gutter) + var(--safe-left));
+}
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 80% at 20% 0%, rgb(29 185 84 / 0.22), transparent 60%),
+    linear-gradient(180deg, #1d4d30 0%, #143322 35%, var(--bg) 100%);
+}
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+.hero__cover {
+  width: min(60vw, 280px);
+  flex: none;
+}
+.hero__cover img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-cover);
+}
+.hero__meta { display: grid; gap: var(--sp-3); width: 100%; }
+.eyebrow__series { color: var(--text-muted); }
+.hero__series { color: var(--text); font-weight: 700; }
+.hero__lead { color: var(--text-muted); max-width: 70ch; }
+
+.meta-list {
+  display: flex;
+  flex-wrap: wrap;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+.meta-list li + li::before { content: "•"; margin: 0 var(--sp-2); color: var(--text-faint); }
+
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-2);
+}
+
+@media (min-width: 768px) {
+  .hero { padding-bottom: var(--sp-7); }
+  .hero__inner { flex-direction: row; align-items: flex-end; gap: var(--sp-6); }
+  .hero__cover { width: 232px; }
+}

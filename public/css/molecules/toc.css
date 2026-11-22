@@ -1,0 +1,26 @@
+/**
+ * MOLECULE · Índice del documento ("En este documento").
+ * CSS counters numeran los ítems sin depender del texto del Markdown.
+ */
+.toc__list { margin-top: var(--sp-3); counter-reset: toc; }
+.toc__list li { counter-increment: toc; }
+.toc__list a {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-2);
+  margin-inline: calc(var(--sp-2) * -1);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  text-decoration: none;
+  transition: background-color var(--dur-fast), color var(--dur-fast);
+}
+.toc__list a::before {
+  content: counter(toc, decimal-leading-zero);
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+.toc__list a:hover { background: var(--surface-hover); color: var(--text); }
+.toc__list a[aria-current="true"] { color: var(--accent); }
+.toc__list a[aria-current="true"]::before { color: var(--accent); }

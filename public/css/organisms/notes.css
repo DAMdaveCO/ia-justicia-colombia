@@ -1,0 +1,106 @@
+/**
+ * ORGANISM · Notas del episodio (.prose = contenido generado desde Markdown).
+ * Longitud de línea limitada (~75 caracteres) para una lectura cómoda.
+ */
+.notes__header { display: grid; gap: var(--sp-1); margin-bottom: var(--sp-4); }
+
+.prose { max-width: 100%; color: var(--text-muted); font-size: var(--fs-base); }
+.prose > * + * { margin-top: var(--sp-4); }
+.prose :is(h2, h3, h4, h5, h6) { color: var(--text); line-height: var(--lh-snug); scroll-margin-top: var(--sp-5); }
+.prose h2 { font-size: var(--fs-xl); font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; }
+.prose h3 {
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+.prose h4 { margin-top: var(--sp-6); font-size: var(--fs-md); font-weight: 700; }
+.prose h5 { margin-top: var(--sp-5); font-size: var(--fs-base); font-weight: 700; color: var(--accent); }
+.prose h6 { font-size: var(--fs-sm); font-weight: 700; }
+.prose hr { display: none; } /* Los h3 ya llevan separador visual */
+.prose strong { color: var(--text); font-weight: 700; }
+.prose em { font-style: italic; }
+.prose p, .prose li { max-width: 75ch; }
+.prose ul, .prose ol { padding-left: 1.4em; }
+.prose li + li { margin-top: var(--sp-2); }
+.prose li > ul, .prose li > ol { margin-top: var(--sp-2); }
+.prose li::marker { color: var(--accent); }
+.prose ol > li::marker { font-weight: 700; font-variant-numeric: tabular-nums; }
+.prose a { color: var(--accent); text-underline-offset: 3px; }
+.prose a:hover { color: var(--accent-hover); }
+.prose code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--surface-3);
+  color: var(--text);
+  font-size: 0.9em;
+}
+
+/* Citas destacadas (pull quotes) */
+.prose blockquote {
+  position: relative;
+  max-width: 75ch;
+  padding: var(--sp-4) var(--sp-5) var(--sp-4) var(--sp-6);
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  color: var(--text);
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+}
+.prose blockquote::before {
+  content: "“";
+  position: absolute;
+  left: var(--sp-3);
+  top: -0.1em;
+  color: var(--accent);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* Marcas de tiempo clicables */
+.prose a.timestamp {
+  display: inline-flex;
+  padding: 0 0.4em;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  text-decoration: none;
+}
+.prose a.timestamp:hover { background: var(--accent); color: var(--accent-ink); }
+
+/* Tablas: región desplazable en móvil (no rompen el ancho de la página) */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  -webkit-overflow-scrolling: touch;
+}
+.prose table { width: 100%; min-width: 640px; border-collapse: collapse; font-size: var(--fs-sm); }
+.prose th, .prose td { padding: var(--sp-3) var(--sp-4); text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+.prose thead th { background: var(--surface-2); color: var(--text); font-size: var(--fs-xs); letter-spacing: 0.04em; text-transform: uppercase; }
+.prose tbody th { color: var(--text); font-weight: 600; }
+.prose tbody tr:hover { background: rgb(255 255 255 / 0.03); }
+.prose tr:last-child > * { border-bottom: 0; }
+.prose .align-center { text-align: center; }
+.prose .align-right { text-align: right; }
+
+/* Estado de carga de pestañas (esqueleto) */
+.prose[aria-busy="true"]::before {
+  content: "";
+  display: block;
+  height: 12rem;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+/* Entrada suave al cambiar de pestaña */
+@media (prefers-reduced-motion: no-preference) {
+  .prose.is-entering { animation: fade-up var(--dur-slow) var(--ease-out); }
+}
+@keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }

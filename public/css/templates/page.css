@@ -1,0 +1,51 @@
+/**
+ * TEMPLATE · Disposición de la página (mobile-first).
+ * Móvil: una columna. Escritorio (≥ 1024px): notas + barra lateral fija
+ * (position: sticky), con el índice siempre a mano mientras se lee.
+ */
+/* Contexto de posición para la cabecera superpuesta */
+.page { position: relative; }
+
+main {
+  display: grid;
+  /* minmax(0,1fr): sin esto, un hijo ancho (tabla de 640px) fija el ancho
+     mínimo de la columna y la página desborda en móvil. */
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+}
+main:focus { outline: none; }
+
+/* Secciones con ancho máximo y márgenes que respetan el área segura lateral
+   de iPhone en horizontal (notch a izquierda o derecha). */
+.player,
+.community,
+.content-grid {
+  width: calc(100% - 2 * var(--gutter) - var(--safe-left) - var(--safe-right));
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-5);
+  margin-top: var(--sp-5);
+}
+.sidebar { display: grid; gap: var(--sp-4); align-content: start; }
+.author { display: grid; gap: var(--sp-3); justify-items: start; }
+
+@media (min-width: 1024px) {
+  .content-grid { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; }
+  .sidebar { position: sticky; top: var(--sp-5); max-height: calc(100vh - 2 * var(--sp-5)); overflow-y: auto; scrollbar-width: thin; }
+}
+
+/* Página 404 (public/404.html) */
+.not-found {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--sp-4);
+  min-height: 100dvh;
+  padding: var(--gutter);
+  text-align: center;
+}

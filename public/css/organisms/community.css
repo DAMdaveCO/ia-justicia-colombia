@@ -1,0 +1,31 @@
+/**
+ * ORGANISM · Tarjeta destacada de comunidad (CTA principal).
+ * Borde con degradado verde para diferenciarla del resto de tarjetas sin
+ * recurrir a colores que bajen el contraste del texto.
+ */
+.community {
+  position: relative;
+  display: grid;
+  gap: var(--sp-4);
+  align-items: center;
+  background:
+    linear-gradient(var(--surface-1), var(--surface-1)) padding-box,
+    linear-gradient(135deg, var(--accent), rgb(29 185 84 / 0.15) 60%) border-box;
+  border: 1px solid transparent;
+}
+.community__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.community__body { display: grid; gap: var(--sp-2); }
+.community__cta { justify-self: start; }
+
+@media (min-width: 768px) {
+  .community { grid-template-columns: auto 1fr auto; gap: var(--sp-5); }
+  .community__cta { justify-self: end; }
+}

@@ -1,0 +1,39 @@
+/**
+ * main.css — Punto de entrada de estilos (Atomic Design).
+ * En desarrollo cada capa vive en su archivo; scripts/build.mjs resuelve estos
+ * @import y entrega UN solo archivo minificado (sin peticiones en cascada).
+ *
+ * Orden = especificidad creciente: tokens → base → átomos → moléculas →
+ * organismos → plantillas. Una capa solo puede apoyarse en las anteriores.
+ */
+@import "tokens.css";
+@import "base.css";
+
+/* Átomos: piezas indivisibles */
+@import "atoms/typography.css";
+@import "atoms/icon.css";
+@import "atoms/button.css";
+@import "atoms/tag.css";
+@import "atoms/slider.css";
+@import "atoms/range.css";
+@import "atoms/equalizer.css";
+
+/* Moléculas: combinaciones de átomos con una función */
+@import "molecules/timeline.css";
+@import "molecules/controls.css";
+@import "molecules/tabs.css";
+@import "molecules/share.css";
+@import "molecules/toast.css";
+@import "molecules/toc.css";
+
+/* Organismos: secciones completas */
+@import "organisms/header.css";
+@import "organisms/hero.css";
+@import "organisms/player.css";
+@import "organisms/mini-player.css";
+@import "organisms/community.css";
+@import "organisms/notes.css";
+@import "organisms/footer.css";
+
+/* Plantillas: disposición de la página */
+@import "templates/page.css";

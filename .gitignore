@@ -1,0 +1,22 @@
+# Salida del build (Netlify la regenera en cada despliegue)
+dist/
+
+# Material de producción que NO debe publicarse ni subirse al repositorio
+grabaciones-mal-audio/
+_produccion/
+*.m4a
+!public/assets/audio/*.m4a
+
+# Copias originales en la raíz (las versiones publicadas viven en public/)
+/*.md
+!/README.md
+/*.jpg
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.netlify/
+node_modules/
+
+# Ajustes locales de Claude Code
+.claude/settings.local.json

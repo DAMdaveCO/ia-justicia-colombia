@@ -1,0 +1,17 @@
+/**
+ * MOLECULE · Línea de tiempo = tiempo actual + slider + duración.
+ * tabular-nums: los dígitos tienen ancho fijo, así el texto no "baila"
+ * cada segundo mientras avanza la reproducción.
+ */
+.timeline {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.timeline__time {
+  min-width: 3.25ch;
+  color: var(--text-muted);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+.timeline__time:last-child { text-align: right; }

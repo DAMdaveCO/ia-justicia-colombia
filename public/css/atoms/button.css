@@ -1,0 +1,104 @@
+/**
+ * ATOM · Botón. Base común + variantes (BEM: .btn--variante).
+ * - Área táctil mínima 44×44 px (WCAG 2.5.5 / guías de Apple).
+ * - touch-action: manipulation elimina el retraso de 300 ms del doble toque
+ *   en navegadores móviles antiguos y evita el zoom por doble toque.
+ * - Microinteracción: escala al presionar + onda (ripple) desde el punto de
+ *   contacto. Las coordenadas llegan por variables CSS (--ripple-x/y) que JS
+ *   fija con style.setProperty: la CSP lo permite, a diferencia de style="".
+ */
+.btn {
+  --btn-bg: transparent;
+  --btn-fg: var(--text);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 var(--sp-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  white-space: nowrap;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.btn:active { transform: scale(0.95); }
+
+/* Onda (ripple) */
+.btn::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: var(--ripple-x, 50%);
+  top: var(--ripple-y, 50%);
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+.btn.is-rippling::after { animation: ripple 520ms var(--ease-out); }
+@keyframes ripple {
+  from { opacity: 0.28; transform: scale(0); }
+  to { opacity: 0; transform: scale(24); }
+}
+
+/* Variantes */
+.btn--primary { --btn-bg: var(--accent); --btn-fg: var(--accent-ink); }
+.btn--primary:hover { --btn-bg: var(--accent-hover); transform: scale(1.04); }
+
+.btn--ghost { --btn-fg: var(--text-muted); border: 1px solid rgb(255 255 255 / 0.3); }
+.btn--ghost:hover { --btn-fg: var(--text); border-color: var(--text); }
+
+.btn--outline { --btn-fg: var(--text); border: 1px solid rgb(255 255 255 / 0.3); }
+.btn--outline:hover { border-color: var(--text); --btn-bg: rgb(255 255 255 / 0.06); }
+
+.btn--pill { padding: 0 var(--sp-3); min-width: 56px; --btn-bg: var(--surface-3); font-variant-numeric: tabular-nums; }
+.btn--pill:hover { --btn-bg: #3a3a3a; }
+
+/* Botón circular solo-icono (requiere aria-label en el HTML) */
+.btn--icon { padding: 0; width: 44px; --btn-fg: var(--text-muted); }
+.btn--icon:hover { --btn-fg: var(--text); transform: scale(1.06); }
+.btn--sm { width: 40px; min-width: 40px; min-height: 40px; }
+
+/* Botón play redondo verde (firma visual de Spotify) */
+.btn--play {
+  padding: 0;
+  width: 48px;
+  --btn-bg: var(--accent);
+  --btn-fg: var(--accent-ink);
+  border-radius: 50%;
+}
+.btn--play:hover { --btn-bg: var(--accent-hover); transform: scale(1.06); }
+.btn--play:active { transform: scale(0.94); }
+.btn--md { width: 44px; min-height: 44px; }
+.btn--lg { width: 56px; min-height: 56px; }
+.btn--xl { width: 64px; min-height: 64px; box-shadow: 0 8px 24px rgb(29 185 84 / 0.25); }
+.btn--play .icon { width: 1.5rem; height: 1.5rem; }
+.btn--xl .icon { width: 1.875rem; height: 1.875rem; }
+/* Compensación óptica: el triángulo "play" parece descentrado a la izquierda */
+.btn--play .icon-play { transform: translateX(1px); }
+
+@media (hover: none) {
+  /* En pantallas táctiles :hover se queda "pegado" tras tocar: lo neutralizamos */
+  .btn:hover { transform: none; }
+}
